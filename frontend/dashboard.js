@@ -34,8 +34,6 @@ async function loadDashboard() {
 
         const role = String(user.role || "employee").toLowerCase();
 
-        dashboardContent.replaceChildren();
-
         const roleLine = document.createElement("p");
         roleLine.textContent = "Account role: " + role;
 
