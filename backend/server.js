@@ -10,17 +10,18 @@ const adminRoutes = require("./admin");
 const documentsRoutes = require("./documents");
 
 const app = express();
+
+const isProduction = process.env.NODE_ENV === "production";
+
 if (isProduction) {
     app.set("trust proxy", 1);
 }
-
 console.log("SECUREDOC UPDATED SERVER FILE LOADED");
 
 app.disable("x-powered-by");
 app.use(express.json({ limit: "20kb" }));
 
 // Session configuration
-const isProduction = process.env.NODE_ENV === "production";
 
 const sessionSecret =
     process.env.SESSION_SECRET ||
