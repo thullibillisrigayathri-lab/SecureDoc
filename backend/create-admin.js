@@ -2,6 +2,18 @@ const bcrypt = require("bcryptjs");
 const db = require("./database");
 
 async function main() {
+    const existing = db.prepare(`
+        SELECT u.id
+        FROM users u
+        JOIN roles r ON u.role_id = r.id
+        WHERE r.name = 'admin'
+    `).get();
+
+    if (existing) {
+        console.log("Admin already exists. Skipping setup.");
+        return;
+    }
+
     const name = (process.env.ADMIN_NAME || "").trim();
     const email = (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
     const password = process.env.ADMIN_PASSWORD || "";
@@ -15,32 +27,33 @@ async function main() {
         "SELECT id FROM roles WHERE name = 'admin'"
     ).get();
 
-    if (!role) throw new Error("Admin role not found.");
-
-    const existing = db.prepare(`
-        SELECT u.id FROM users u
-        JOIN roles r ON u.role_id = r.id
-        WHERE r.name = 'admin'
-    `).get();
-
-    if (existing) throw new Error("Admin already exists.");
+    if (!role) {
+        throw new Error("Admin role not found.");
+    }
 
     const hash = await bcrypt.hash(password, 12);
 
-    db.prepare(`
-        INSERT INTO users
-        (name, email, password_hash, status, role_id)
-        VALUES (?, ?, ?, 'approved', ?)
-    `).run(name, email, hash, role.id);
+    const createAdmin = db.transaction(() => {
+        db.prepare(`
+            INSERT INTO users
+            (name, email, password_hash, status, role_id)
+            VALUES (?, ?, ?, 'approved', ?)
+        `).run(name, email, hash, role.id);
 
-    db.prepare(`
-        INSERT INTO audit_logs
-        (actor_email, action, resource, decision, reason)
-        VALUES (?, ?, ?, ?, ?)
-    `).run(
-        email, "admin_bootstrap", "admin_account",
-        "allowed", "Initial administrator created."
-    );
+        db.prepare(`
+            INSERT INTO audit_logs
+            (actor_email, action, resource, decision, reason)
+            VALUES (?, ?, ?, ?, ?)
+        `).run(
+            email,
+            "admin_bootstrap",
+            "admin_account",
+            "allowed",
+            "Initial administrator created."
+        );
+    });
+
+    createAdmin();
 
     console.log("Initial Admin account created successfully!");
 }
