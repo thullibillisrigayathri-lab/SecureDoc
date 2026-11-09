@@ -1,112 +1,20 @@
+<form id="permissionForm">
+    <select id="permissionDocumentId" required>
+        <option value="">Select Document</option>
+    </select>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureDoc Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <main class="form-section">
-        <div class="auth-card dashboard-card">
+    <select id="permissionUserId" required>
+        <option value="">Select Approved User</option>
+    </select>
 
-            <div class="brand">
-                <div class="brand-icon">S</div>
-                <span>SecureDoc</span>
-            </div>
+    <select id="permissionType" required>
+        <option value="read">Read</option>
+        <option value="download">Download</option>
+    </select>
 
-            <h2 style="margin-top:30px">Welcome to SecureDoc!</h2>
+    <button class="primary-btn" type="submit">
+        Grant Permission
+    </button>
+</form>
 
-            <p class="subheading" id="userInfo">
-                Loading account...
-            </p>
-
-            <div class="security-note">
-                Secure login verified
-            </div>
-
-            <div id="dashboardContent">
-                <p>Loading dashboard...</p>
-            </div>
-
-            <section id="adminSection" hidden>
-                <h2>Admin Panel</h2>
-
-                <h3>Upload PDF Document</h3>
-                <form id="uploadForm">
-                    <input
-                        type="file"
-                        id="documentFile"
-                        accept="application/pdf"
-                        required
-                    >
-                    <button class="primary-btn" type="submit">
-                        Upload Document
-                    </button>
-                </form>
-                <p id="uploadMessage"></p>
-
-                <hr>
-
-                <h3>Pending User Approvals</h3>
-                <div id="pendingUsers">
-                    Loading pending users...
-                </div>
-
-                <hr>
-
-                <h3>Grant Document Permission</h3>
-                <form id="permissionForm">
-                    <input
-                        type="number"
-                        id="permissionDocumentId"
-                        placeholder="Document ID"
-                        min="1"
-                        required
-                    >
-
-                    <input
-                        type="number"
-                        id="permissionUserId"
-                        placeholder="User ID"
-                        min="1"
-                        required
-                    >
-
-                    <select id="permissionType" required>
-                        <option value="read">Read</option>
-                        <option value="download">Download</option>
-                    </select>
-
-                    <button class="primary-btn" type="submit">
-                        Grant Permission
-                    </button>
-                </form>
-                <p id="permissionMessage"></p>
-
-                <hr>
-
-                <h3>Audit Logs</h3>
-                <div id="auditLogs">
-                    Loading audit logs...
-                </div>
-            </section>
-
-            <section>
-                <h2>Documents</h2>
-                <div id="documentsList">
-                    Loading documents...
-                </div>
-            </section>
-
-            <button class="primary-btn" id="logoutBtn">
-                Logout
-            </button>
-
-        </div>
-    </main>
-
-    <script src="dashboard.js"></script>
-</body>
-</html>
+<p id="permissionMessage"></p>

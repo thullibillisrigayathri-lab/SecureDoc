@@ -45,6 +45,24 @@ router.get("/pending-users", requireAdmin, (req, res) => {
 
     res.json({ pendingUsers: users });
 });
+// List approved employees and auditors
+router.get("/approved-users", requireAdmin, (req, res) => {
+    try {
+        const users = db.prepare(`
+            SELECT u.id, u.name, u.email, r.name AS role
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE u.status = 'approved'
+              AND r.name IN ('employee', 'auditor')
+            ORDER BY u.id DESC
+        `).all();
+
+        res.json({ users });
+    } catch (error) {
+        console.error("Approved users error:", error);
+        res.status(500).json({ error: "Could not load approved users." });
+    }
+});
 
 // Approve a pending user
 router.post("/users/:id/approve", requireAdmin, (req, res) => {

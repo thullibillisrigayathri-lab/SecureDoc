@@ -6,7 +6,6 @@ const ADMIN_API = "/api/admin";
 const userInfo = document.getElementById("userInfo");
 const dashboardContent = document.getElementById("dashboardContent");
 const logoutBtn = document.getElementById("logoutBtn");
-
 const adminSection = document.getElementById("adminSection");
 const documentsList = document.getElementById("documentsList");
 
@@ -53,6 +52,7 @@ async function loadDashboard() {
             adminSection.hidden = false;
             await loadPendingUsers();
             await loadAuditLogs();
+            await loadPermissionOptions();
         }
 
         await loadDocuments();
@@ -69,7 +69,6 @@ async function loadDocuments() {
 
     try {
         const data = await apiRequest(DOC_API);
-
         documentsList.replaceChildren();
 
         if (!data.documents.length) {
@@ -185,6 +184,7 @@ document.getElementById("uploadForm").addEventListener(
 
             fileInput.value = "";
             await loadDocuments();
+            await loadPermissionOptions();
 
         } catch (error) {
             message.textContent = error.message;
@@ -242,6 +242,7 @@ async function loadPendingUsers() {
                     );
 
                     await loadPendingUsers();
+                    await loadPermissionOptions();
                     alert("User approved successfully.");
 
                 } catch (error) {
@@ -258,25 +259,61 @@ async function loadPendingUsers() {
     }
 }
 
+// Admin: Load documents and approved users into dropdowns
+async function loadPermissionOptions() {
+    const userSelect = document.getElementById("permissionUserId");
+    const documentSelect = document.getElementById("permissionDocumentId");
+    const message = document.getElementById("permissionMessage");
+
+    try {
+        const [userData, documentData] = await Promise.all([
+            apiRequest(`${ADMIN_API}/approved-users`),
+            apiRequest(DOC_API)
+        ]);
+
+        userSelect.replaceChildren();
+        documentSelect.replaceChildren();
+
+        userSelect.add(new Option("Select Approved User", ""));
+        documentSelect.add(new Option("Select Document", ""));
+
+        userData.users.forEach(user => {
+            userSelect.add(
+                new Option(`${user.name} (${user.email})`, user.id)
+            );
+        });
+
+        documentData.documents.forEach(doc => {
+            documentSelect.add(
+                new Option(
+                    `${doc.original_name} (ID: ${doc.id})`,
+                    doc.id
+                )
+            );
+        });
+
+    } catch (error) {
+        message.textContent = error.message;
+    }
+}
+
 // Admin: Grant document permissions
 document.getElementById("permissionForm").addEventListener(
     "submit",
     async event => {
         event.preventDefault();
 
-        const message = document.getElementById("permissionMessage");
+        const documentId =
+            document.getElementById("permissionDocumentId").value;
 
-        const documentId = document.getElementById(
-            "permissionDocumentId"
-        ).value;
+        const userId =
+            document.getElementById("permissionUserId").value;
 
-        const userId = document.getElementById(
-            "permissionUserId"
-        ).value;
+        const permission =
+            document.getElementById("permissionType").value;
 
-        const permission = document.getElementById(
-            "permissionType"
-        ).value;
+        const message =
+            document.getElementById("permissionMessage");
 
         try {
             const data = await apiRequest(
@@ -293,8 +330,11 @@ document.getElementById("permissionForm").addEventListener(
                 }
             );
 
-            message.textContent = data.message;
+            message.textContent =
+                data.message || "Permission granted successfully.";
+
             await loadDocuments();
+            await loadAuditLogs();
 
         } catch (error) {
             message.textContent = error.message;
