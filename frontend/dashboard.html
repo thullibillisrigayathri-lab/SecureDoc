@@ -1,20 +1,119 @@
-<form id="permissionForm">
-    <select id="permissionDocumentId" required>
-        <option value="">Select Document</option>
-    </select>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureDoc Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <select id="permissionUserId" required>
-        <option value="">Select Approved User</option>
-    </select>
+    <main class="form-section">
+        <div class="auth-card dashboard-card">
 
-    <select id="permissionType" required>
-        <option value="read">Read</option>
-        <option value="download">Download</option>
-    </select>
+            <div class="brand">
+                <div class="brand-icon">🔐</div>
+                <h1>SecureDoc</h1>
+                <p>Secure Document Access Management</p>
+            </div>
 
-    <button class="primary-btn" type="submit">
-        Grant Permission
-    </button>
-</form>
+            <div class="dashboard-header">
+                <h2>Dashboard</h2>
+                <p id="userInfo">Loading user information...</p>
+                <button id="logoutBtn" class="primary-btn" type="button">
+                    Logout
+                </button>
+            </div>
 
-<p id="permissionMessage"></p>
+            <div id="dashboardContent">
+
+                <section class="dashboard-section">
+                    <h3>Documents</h3>
+                    <div id="documentsList">
+                        Loading documents...
+                    </div>
+                </section>
+
+                <section id="adminSection" hidden>
+
+                    <div class="dashboard-section">
+                        <h3>Upload Document</h3>
+
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <input
+                                type="file"
+                                id="documentFile"
+                                accept=".pdf,application/pdf"
+                                required
+                            >
+
+                            <button class="primary-btn" type="submit">
+                                Upload PDF
+                            </button>
+                        </form>
+
+                        <p id="uploadMessage"></p>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h3>Pending User Approvals</h3>
+                        <div id="pendingUsers">
+                            Loading pending users...
+                        </div>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h3>Grant Document Permission</h3>
+
+                        <form id="permissionForm">
+
+                            <label for="permissionDocumentId">
+                                Select Document
+                            </label>
+
+                            <select id="permissionDocumentId" required>
+                                <option value="">Select Document</option>
+                            </select>
+
+                            <label for="permissionUserId">
+                                Select Approved User
+                            </label>
+
+                            <select id="permissionUserId" required>
+                                <option value="">Select Approved User</option>
+                            </select>
+
+                            <label for="permissionType">
+                                Permission Type
+                            </label>
+
+                            <select id="permissionType" required>
+                                <option value="read">Read</option>
+                                <option value="download">Download</option>
+                            </select>
+
+                            <button class="primary-btn" type="submit">
+                                Grant Permission
+                            </button>
+                        </form>
+
+                        <p id="permissionMessage"></p>
+                    </div>
+
+                    <div class="dashboard-section">
+                        <h3>Audit Logs</h3>
+                        <div id="auditLogs">
+                            Loading audit logs...
+                        </div>
+                    </div>
+
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <script src="dashboard.js"></script>
+
+</body>
+</html>
