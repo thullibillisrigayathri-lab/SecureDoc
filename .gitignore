@@ -6,3 +6,16 @@ storage/*
 database/*.sqlite
 database/*.sqlite-wal
 database/*.sqlite-shm
+
+# Local test files and sensitive test data
+backend/*.json
+backend/*-test.pdf
+backend/check-admin.js
+backend/create-admin.js
+backend/reset-admin.js
+backend/reset-user.js
+
+# Local database and uploaded documents
+database/
+storage/*
+!storage/.gitkeep

@@ -1,16 +1,18 @@
-
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const db = require("./database");
 
 const router = express.Router();
 
+// Used so login takes the same time whether the email exists or not
+const DUMMY_HASH = bcrypt.hashSync("dummy-password-for-timing", 12);
+
 function audit(email, action, decision, reason) {
     db.prepare(`
         INSERT INTO audit_logs
         (actor_email, action, resource, decision, reason)
         VALUES (?, ?, ?, ?, ?)
-    `).run(email, action, "authentication", decision, reason);
+    `).run(String(email).slice(0, 254), action, "authentication", decision, reason);
 }
 
 // User Registration
@@ -87,9 +89,13 @@ router.post("/login", async (req, res) => {
             WHERE email = ?
         `).get(email);
 
-        const validPassword = user
-            ? await bcrypt.compare(password, user.password_hash)
-            : false;
+        // Always run bcrypt so response time is the same
+        // whether or not the email exists
+        const passwordMatches = await bcrypt.compare(
+            password,
+            user ? user.password_hash : DUMMY_HASH
+        );
+        const validPassword = Boolean(user) && passwordMatches;
 
         if (!user || !validPassword) {
             audit(
@@ -200,5 +206,6 @@ router.post("/logout", (req, res) => {
         res.json({ message: "Logged out successfully." });
     });
 });
+console.log("Auth routes loaded:", router.stack.map(r => r.route?.path));
 
 module.exports = router;
