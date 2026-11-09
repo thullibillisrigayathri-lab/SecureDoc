@@ -10,6 +10,9 @@ const adminRoutes = require("./admin");
 const documentsRoutes = require("./documents");
 
 const app = express();
+if (isProduction) {
+    app.set("trust proxy", 1);
+}
 
 console.log("SECUREDOC UPDATED SERVER FILE LOADED");
 
