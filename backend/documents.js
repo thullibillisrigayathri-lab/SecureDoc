@@ -8,14 +8,15 @@ const db = require("./database");
 
 const router = express.Router();
 
+const DATA_DIR =
+    process.env.SECUREDOC_DATA_DIR ||
+    path.join(__dirname, "..");
+
 const STORAGE_DIR = path.join(
-    __dirname,
-    "..",
+    DATA_DIR,
     "storage",
     "private-documents"
-);
-
-fs.mkdirSync(STORAGE_DIR, { recursive: true });
+);fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
 // PDF upload configuration
 const upload = multer({

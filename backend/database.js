@@ -2,8 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const Database = require("better-sqlite3");
 
+// Configurable persistent data directory
+const DATA_DIR =
+    process.env.SECUREDOC_DATA_DIR ||
+    path.join(__dirname, "..");
+
 // Create database folder
-const folder = path.join(__dirname, "..", "database");
+const folder = path.join(DATA_DIR, "database");
 fs.mkdirSync(folder, { recursive: true });
 
 // Connect to database
@@ -81,5 +86,4 @@ const addRole = db.prepare(
 });
 
 console.log("SecureDoc database created successfully!");
-
 module.exports = db;
